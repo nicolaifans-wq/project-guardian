@@ -113,6 +113,9 @@ export const Header = () => {
                     <DropdownMenuItem onClick={() => navigate("/cart")}>
                       Корзина
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/my-orders")}>
+                      Мои заказы
+                    </DropdownMenuItem>
                     {(isAdmin || isJournalist) && (
                       <>
                         <DropdownMenuSeparator />

@@ -39,27 +39,12 @@ const AdminUsers = () => {
 
   const loadUsers = async () => {
     try {
-      // Fetch all user roles
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('user_id, role');
+      // Use the database function to get all users with their roles
+      const { data, error } = await supabase.rpc('get_all_users_with_roles');
 
-      if (rolesError) throw rolesError;
+      if (error) throw error;
 
-      const rolesMap = new Map(rolesData?.map(r => [r.user_id, r.role]) || []);
-
-      // We can't directly query auth.users, so we'll get users from user_roles
-      // and show their roles
-      const userIds = Array.from(rolesMap.keys());
-      
-      setUsers(
-        userIds.map(id => ({
-          id,
-          email: '', // We don't have direct access to email from auth.users
-          created_at: '',
-          role: rolesMap.get(id),
-        }))
-      );
+      setUsers(data || []);
     } catch (error: any) {
       console.error('Error loading users:', error);
       toast.error('Ошибка при загрузке пользователей');
@@ -153,7 +138,8 @@ const AdminUsers = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID пользователя</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Дата регистрации</TableHead>
                         <TableHead>Роль</TableHead>
                         <TableHead>Действия</TableHead>
                       </TableRow>
@@ -161,7 +147,8 @@ const AdminUsers = () => {
                     <TableBody>
                       {users.map((u) => (
                         <TableRow key={u.id}>
-                          <TableCell className="font-mono text-sm">{u.id}</TableCell>
+                          <TableCell className="font-medium">{u.email}</TableCell>
+                          <TableCell>{new Date(u.created_at).toLocaleDateString('ru-RU')}</TableCell>
                           <TableCell>
                             <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-primary/10 text-primary">
                               {u.role || 'user'}
