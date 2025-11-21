@@ -1,21 +1,17 @@
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
+import { CheckoutDialog } from "@/components/CheckoutDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { items, totalAmount, updateQuantity, removeFromCart, checkout, isLoading } = useCart();
+  const { items, totalAmount, updateQuantity, removeFromCart, isLoading } = useCart();
   const navigate = useNavigate();
-
-  const handleCheckout = async () => {
-    const orderId = await checkout();
-    if (orderId) {
-      navigate("/");
-    }
-  };
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -131,7 +127,7 @@ const Cart = () => {
                     <Button
                       className="w-full"
                       size="lg"
-                      onClick={handleCheckout}
+                      onClick={() => setCheckoutOpen(true)}
                       disabled={isLoading}
                     >
                       Оформить заказ
@@ -144,6 +140,7 @@ const Cart = () => {
         </section>
       </main>
       <Footer />
+      <CheckoutDialog open={checkoutOpen} onOpenChange={setCheckoutOpen} />
     </div>
   );
 };

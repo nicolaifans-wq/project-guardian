@@ -122,6 +122,11 @@ export type Database = {
       orders: {
         Row: {
           created_at: string
+          customer_comment: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_patronymic: string | null
+          customer_phone: string
           id: string
           status: string
           total_amount: number
@@ -130,6 +135,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          customer_comment?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_patronymic?: string | null
+          customer_phone?: string
           id?: string
           status?: string
           total_amount?: number
@@ -138,6 +148,11 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          customer_comment?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_patronymic?: string | null
+          customer_phone?: string
           id?: string
           status?: string
           total_amount?: number

@@ -48,7 +48,7 @@ const Admin = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isAdmin && (
                 <>
-                  <Card className="cursor-pointer hover:shadow-hover transition-shadow">
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/products')}>
                     <CardHeader>
                       <ShoppingBag className="h-12 w-12 mb-4 text-primary" />
                       <CardTitle>Товары</CardTitle>
@@ -63,7 +63,7 @@ const Admin = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="cursor-pointer hover:shadow-hover transition-shadow">
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/categories')}>
                     <CardHeader>
                       <FolderOpen className="h-12 w-12 mb-4 text-primary" />
                       <CardTitle>Категории</CardTitle>
@@ -78,7 +78,7 @@ const Admin = () => {
                     </CardContent>
                   </Card>
 
-                  <Card className="cursor-pointer hover:shadow-hover transition-shadow">
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/users')}>
                     <CardHeader>
                       <Users className="h-12 w-12 mb-4 text-primary" />
                       <CardTitle>Пользователи</CardTitle>
@@ -92,11 +92,41 @@ const Admin = () => {
                       </p>
                     </CardContent>
                   </Card>
+
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/orders')}>
+                    <CardHeader>
+                      <ShoppingBag className="h-12 w-12 mb-4 text-primary" />
+                      <CardTitle>Заявки</CardTitle>
+                      <CardDescription>
+                        Заказы от клиентов
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Просмотр и обработка заявок
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/stats')}>
+                    <CardHeader>
+                      <ShoppingBag className="h-12 w-12 mb-4 text-primary" />
+                      <CardTitle>Статистика</CardTitle>
+                      <CardDescription>
+                        Аналитика и отчеты
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Обзор ключевых показателей
+                      </p>
+                    </CardContent>
+                  </Card>
                 </>
               )}
 
               {(isAdmin || isJournalist) && (
-                <Card className="cursor-pointer hover:shadow-hover transition-shadow">
+                <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/articles')}>
                   <CardHeader>
                     <Newspaper className="h-12 w-12 mb-4 text-primary" />
                     <CardTitle>Статьи</CardTitle>
