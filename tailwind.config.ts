@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        winter: {
+          ice: "hsl(var(--ice-blue))",
+          frost: "hsl(var(--frost))",
+          sky: "hsl(var(--winter-sky))",
+          deep: "hsl(var(--deep-blue))",
+          snow: "hsl(var(--snow))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +64,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        hover: "var(--shadow-hover)",
+        glow: "var(--shadow-glow)",
+      },
+      backgroundImage: {
+        "gradient-winter": "var(--gradient-winter)",
+        "gradient-frost": "var(--gradient-frost)",
       },
       borderRadius: {
         lg: "var(--radius)",
