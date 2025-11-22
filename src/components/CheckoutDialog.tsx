@@ -24,7 +24,7 @@ const checkoutSchema = z.object({
 });
 
 export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
-  const { items } = useCart();
+  const { items, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -103,7 +103,7 @@ export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
       if (error) throw error;
 
       toast.success('Заказ успешно оформлен! Мы свяжемся с вами в ближайшее время.');
-      
+      clearCart();
       onOpenChange(false);
       setFormData({
         name: '',
@@ -112,9 +112,6 @@ export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
         phone: '',
         comment: '',
       });
-      
-      // Reload the page to refresh cart state
-      window.location.reload();
     } catch (error: any) {
       console.error('Error placing order:', error);
       toast.error('Ошибка при оформлении заказа');
