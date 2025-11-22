@@ -19,6 +19,8 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminArticles from "./pages/admin/AdminArticles";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminStats from "./pages/admin/AdminStats";
+import AdminPages from "./pages/admin/AdminPages";
+import PageBuilder from "./pages/admin/PageBuilder";
 import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
@@ -48,6 +50,8 @@ const App = () => (
               <Route path="/admin/articles" element={<AdminArticles />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/stats" element={<AdminStats />} />
+              <Route path="/admin/pages" element={<AdminPages />} />
+              <Route path="/admin/pages/:pageId" element={<PageBuilder />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
