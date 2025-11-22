@@ -195,22 +195,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearCart = async () => {
-    if (!currentOrderId) return;
-
-    setIsLoading(true);
-    try {
-      const { error } = await supabase
-        .from("order_items")
-        .delete()
-        .eq("order_id", currentOrderId);
-
-      if (error) throw error;
-      await loadCart();
-    } catch (error) {
-      console.error("Error clearing cart:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    // Just clear local state without deleting items from database
+    setItems([]);
+    setCurrentOrderId(null);
   };
 
   const checkout = async (): Promise<string | null> => {
