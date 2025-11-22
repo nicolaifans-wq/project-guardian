@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ShoppingBag, Newspaper, Users, FolderOpen } from "lucide-react";
+import { Loader2, ShoppingBag, Newspaper, Users, FolderOpen, FileText, Palette } from "lucide-react";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -119,6 +119,21 @@ const Admin = () => {
                     <CardContent>
                       <p className="text-sm text-muted-foreground">
                         Обзор ключевых показателей
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="cursor-pointer hover:shadow-hover transition-shadow" onClick={() => navigate('/admin/pages')}>
+                    <CardHeader>
+                      <Palette className="h-12 w-12 mb-4 text-primary" />
+                      <CardTitle>Конструктор страниц</CardTitle>
+                      <CardDescription>
+                        Визуальное редактирование
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        Управление страницами, секциями и темой
                       </p>
                     </CardContent>
                   </Card>
