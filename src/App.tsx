@@ -21,6 +21,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminStats from "./pages/admin/AdminStats";
 import AdminPages from "./pages/admin/AdminPages";
 import PageBuilder from "./pages/admin/PageBuilder";
+import DynamicPage from "./pages/DynamicPage";
 import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import NotFound from "./pages/NotFound";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/admin/pages/:pageId" element={<PageBuilder />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/page/:slug" element={<DynamicPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -208,6 +208,9 @@ export type Database = {
           id: string
           is_active: boolean
           meta_description: string | null
+          navigation_label: string | null
+          navigation_order: number | null
+          show_in_navigation: boolean | null
           slug: string
           title: string
           updated_at: string
@@ -217,6 +220,9 @@ export type Database = {
           id?: string
           is_active?: boolean
           meta_description?: string | null
+          navigation_label?: string | null
+          navigation_order?: number | null
+          show_in_navigation?: boolean | null
           slug: string
           title: string
           updated_at?: string
@@ -226,6 +232,9 @@ export type Database = {
           id?: string
           is_active?: boolean
           meta_description?: string | null
+          navigation_label?: string | null
+          navigation_order?: number | null
+          show_in_navigation?: boolean | null
           slug?: string
           title?: string
           updated_at?: string

@@ -5,8 +5,9 @@ import { NavLink } from "@/components/NavLink";
 import { SearchDialog } from "@/components/SearchDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +24,30 @@ import {
 export const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dynamicPages, setDynamicPages] = useState<any[]>([]);
   const { user, isAdmin, isJournalist, signOut } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadDynamicPages();
+  }, []);
+
+  const loadDynamicPages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pages')
+        .select('*')
+        .eq('show_in_navigation', true)
+        .eq('is_active', true)
+        .order('navigation_order');
+      
+      if (error) throw error;
+      setDynamicPages(data || []);
+    } catch (error) {
+      console.error('Error loading pages:', error);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -74,6 +96,16 @@ export const Header = () => {
               >
                 Контакты
               </NavLink>
+              {dynamicPages.map((page) => (
+                <NavLink
+                  key={page.id}
+                  to={`/page/${page.slug}`}
+                  className="text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+                  activeClassName="text-foreground"
+                >
+                  {page.navigation_label || page.title}
+                </NavLink>
+              ))}
             </nav>
           </div>
 
@@ -175,6 +207,16 @@ export const Header = () => {
                   >
                     Контакты
                   </NavLink>
+                  {dynamicPages.map((page) => (
+                    <NavLink
+                      key={page.id}
+                      to={`/page/${page.slug}`}
+                      className="text-sm font-medium"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {page.navigation_label || page.title}
+                    </NavLink>
+                  ))}
                 </nav>
               </SheetContent>
             </Sheet>

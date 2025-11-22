@@ -14,6 +14,9 @@ import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SectionEditor } from '@/components/admin/SectionEditor';
 import { ThemeEditor } from '@/components/admin/ThemeEditor';
+import { LivePagePreview } from '@/components/admin/LivePagePreview';
+import { VisualSectionEditor } from '@/components/admin/VisualSectionEditor';
+import { Switch } from '@/components/ui/switch';
 import {
   DndContext,
   closestCenter,
@@ -100,6 +103,10 @@ const PageBuilder = () => {
   const [sections, setSections] = useState<PageSection[]>([]);
   const [editingSection, setEditingSection] = useState<PageSection | null>(null);
   const [showSectionEditor, setShowSectionEditor] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [showInNavigation, setShowInNavigation] = useState(false);
+  const [navigationLabel, setNavigationLabel] = useState('');
+  const [navigationOrder, setNavigationOrder] = useState(0);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -135,6 +142,9 @@ const PageBuilder = () => {
       setTitle(pageData.title);
       setSlug(pageData.slug);
       setMetaDescription(pageData.meta_description || '');
+      setShowInNavigation(pageData.show_in_navigation || false);
+      setNavigationLabel(pageData.navigation_label || '');
+      setNavigationOrder(pageData.navigation_order || 0);
 
       const { data: sectionsData, error: sectionsError } = await supabase
         .from('page_sections')
@@ -181,6 +191,9 @@ const PageBuilder = () => {
             title,
             slug,
             meta_description: metaDescription,
+            show_in_navigation: showInNavigation,
+            navigation_label: navigationLabel,
+            navigation_order: navigationOrder,
           })
           .eq('id', pageId);
 
@@ -285,6 +298,29 @@ const PageBuilder = () => {
     }
   };
 
+  const handleVisualUpdate = async (sectionId: string, newData: any) => {
+    try {
+      const { error } = await supabase
+        .from('page_sections')
+        .update({ section_data: newData })
+        .eq('id', sectionId);
+
+      if (error) throw error;
+
+      setSections(sections.map(s => 
+        s.id === sectionId ? { ...s, section_data: newData } : s
+      ));
+    } catch (error: any) {
+      console.error('Error updating section:', error);
+    }
+  };
+
+  const handleSectionClick = (sectionId: string) => {
+    setSelectedSectionId(sectionId);
+  };
+
+  const selectedSection = sections.find(s => s.id === selectedSectionId);
+
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
@@ -328,10 +364,13 @@ const PageBuilder = () => {
         <section className="py-8">
           <div className="container">
             <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="content">Контент</TabsTrigger>
                 <TabsTrigger value="sections" disabled={pageId === 'new'}>
                   Секции
+                </TabsTrigger>
+                <TabsTrigger value="visual" disabled={pageId === 'new'}>
+                  Визуальный редактор
                 </TabsTrigger>
                 <TabsTrigger value="theme">Тема</TabsTrigger>
               </TabsList>
@@ -376,6 +415,50 @@ const PageBuilder = () => {
                         rows={3}
                       />
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Навигация</CardTitle>
+                    <CardDescription>
+                      Настройте отображение страницы в меню сайта
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="show-nav">Показывать в меню</Label>
+                      <Switch
+                        id="show-nav"
+                        checked={showInNavigation}
+                        onCheckedChange={setShowInNavigation}
+                      />
+                    </div>
+                    {showInNavigation && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="nav-label">Название в меню</Label>
+                          <Input
+                            id="nav-label"
+                            value={navigationLabel}
+                            onChange={(e) => setNavigationLabel(e.target.value)}
+                            placeholder={title}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            Оставьте пустым для использования названия страницы
+                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nav-order">Порядок в меню</Label>
+                          <Input
+                            id="nav-order"
+                            type="number"
+                            value={navigationOrder}
+                            onChange={(e) => setNavigationOrder(parseInt(e.target.value) || 0)}
+                          />
+                        </div>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -431,6 +514,26 @@ const PageBuilder = () => {
                     )}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="visual" className="mt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Live Превью</h3>
+                    <LivePagePreview
+                      sections={sections}
+                      onSectionClick={handleSectionClick}
+                      selectedSectionId={selectedSectionId}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Редактор</h3>
+                    <VisualSectionEditor
+                      section={selectedSection}
+                      onUpdate={handleVisualUpdate}
+                    />
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="theme" className="mt-6">
