@@ -85,10 +85,14 @@ export const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
         return;
       }
 
+      // Calculate total amount from items
+      const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
       const { error } = await supabase
         .from('orders')
         .update({
           status: 'processing',
+          total_amount: totalAmount,
           customer_name: formData.name,
           customer_patronymic: formData.patronymic,
           customer_email: formData.email || null,
