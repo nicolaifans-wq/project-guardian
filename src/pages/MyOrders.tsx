@@ -5,7 +5,9 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Package } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Loader2, Package, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Order {
@@ -32,6 +34,9 @@ const MyOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [orderItems, setOrderItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderItems, setSelectedOrderItems] = useState<OrderItem[]>([]);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -98,6 +103,12 @@ const MyOrders = () => {
     }
   };
 
+  const openDetailsDialog = (order: Order) => {
+    setSelectedOrder(order);
+    setSelectedOrderItems(orderItems[order.id] || []);
+    setDetailsDialogOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
@@ -153,34 +164,21 @@ const MyOrders = () => {
                             Статус: В обработке
                           </CardDescription>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm text-muted-foreground">Итого:</p>
-                          <p className="text-2xl font-bold">{order.total_amount} ₽</p>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">Итого:</p>
+                            <p className="text-2xl font-bold">{order.total_amount} ₽</p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openDetailsDialog(order)}
+                          >
+                            <Eye className="h-5 w-5" />
+                          </Button>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        {orderItems[order.id]?.map((item) => (
-                          <div key={item.id} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
-                            {item.product.image_url && (
-                              <img
-                                src={item.product.image_url}
-                                alt={item.product.name}
-                                className="w-16 h-16 object-cover rounded"
-                              />
-                            )}
-                            <div className="flex-1">
-                              <p className="font-medium">{item.product.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {item.quantity} шт. × {item.price} ₽
-                              </p>
-                            </div>
-                            <p className="font-medium">{item.quantity * item.price} ₽</p>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
                   </Card>
                 ))}
               </div>
@@ -188,6 +186,61 @@ const MyOrders = () => {
           </div>
         </section>
       </main>
+
+      <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Детали заказа</DialogTitle>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Дата заказа</p>
+                  <p className="text-lg">
+                    {new Date(selectedOrder.created_at).toLocaleString('ru-RU')}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Статус</p>
+                  <p className="text-lg">В обработке</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Товары в заказе</p>
+                <div className="space-y-2">
+                  {selectedOrderItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 p-3 bg-muted rounded-lg">
+                      {item.product.image_url && (
+                        <img
+                          src={item.product.image_url}
+                          alt={item.product.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium">{item.product.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Количество: {item.quantity} × {item.price} ₽
+                        </p>
+                      </div>
+                      <p className="font-medium">{item.quantity * item.price} ₽</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-medium">Итого:</p>
+                    <p className="text-2xl font-bold">{selectedOrder.total_amount} ₽</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
